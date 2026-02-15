@@ -1,0 +1,27 @@
+{
+  "simulation": {
+    "duration_days": 30,
+    "time_step_minutes": 60,
+    "season": "Summer",
+    "start_date": "2026-06-01"
+  },
+  "battery": {
+    "capacity_kwh": 13.5,
+    "initial_soc_percent": 0.0,
+    "efficiency_round_trip": 0.90,
+    "min_discharge_limit": 0.05
+  },
+  "solar": {
+    "panel_peak_kw": 5.0,
+    "inverter_max_kw": 4.0,
+    "inverter_failure_rate": 0.005
+  },
+  "grid": {
+    "export_limit_kw": 20.0,
+    "cost_import_cents": 0.75,
+    "price_export_cents": 0.90
+  },
+  "strategy": {
+    "name": "LOAD_PRIORITY" 
+  }
+}
