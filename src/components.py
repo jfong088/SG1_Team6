@@ -18,13 +18,13 @@ class Battery:
                                 from simulation_config.json.
         """
         # --- Physical Attributes (Constants) ---
-        # Default: 13.5 kWh (Tesla Powerwall standard) [cite: 48, 84]
+        # Default: 13.5 kWh (Tesla Powerwall standard)
         self.capacity_kwh = config_data.get('capacity', 13.5)
         
-        # Round-trip efficiency (e.g., 0.90 means 10% loss total) [cite: 50, 95]
+        # Round-trip efficiency (e.g., 0.90 means 10% loss total)
         self.efficiency_rt = config_data.get('efficiency', 0.90)
         
-        # Minimum allowed discharge depth (e.g., 0.05 or 5%) [cite: 49]
+        # Minimum allowed discharge depth (e.g., 0.05 or 5%)
         self.min_soc_limit_pct = config_data.get('discharge_depth', 0.05)
 
         # --- Dynamic State (Variables) ---
@@ -81,7 +81,7 @@ class Battery:
         Returns:
             float: The actual energy supplied by the battery.
         """
-        # 1. Calculate the energy floor (minimum charge level) [cite: 49]
+        # 1. Calculate the energy floor (minimum charge level)
         min_energy_kwh = self.capacity_kwh * self.min_soc_limit_pct
         
         # 2. Calculate usable energy above that floor
@@ -126,7 +126,7 @@ class SolarPanel:
         Args:
             config_data (dict): The 'solar' section from simulation_config.json.
         """
-        # [cite_start]Peak generation capacity in kW (e.g., 5.0 kW) [cite: 88]
+        # Peak generation capacity in kW (e.g., 5.0 kW)
         self.peak_power_kw = config_data.get('panel_peak_kw', 5.0)
 
     def get_generation(self, time_of_day_hour, cloud_coverage_pct):
@@ -149,7 +149,7 @@ class SolarPanel:
             return 0.0
 
         # 2. Calculate Sun Angle (0 to Pi radians)
-        # [cite_start]We map the 12 hours of daylight to Pi radians (180 degrees) [cite: 89-90]
+        # We map the 12 hours of daylight to Pi radians (180 degrees)
         daylight_duration = sunset_hour - sunrise_hour
         sun_angle = (time_of_day_hour - sunrise_hour) * (math.pi / daylight_duration)
 
@@ -157,7 +157,7 @@ class SolarPanel:
         base_generation = self.peak_power_kw * math.sin(sun_angle)
 
         # 4. Apply Cloud Factor
-        # [cite_start]"cloud coverage of 0.3 would reduce generation by 30%" [cite: 107]
+        # "cloud coverage of 0.3 would reduce generation by 30%" 
         actual_generation = base_generation * (1 - cloud_coverage_pct)
 
         return max(0.0, actual_generation)
@@ -177,13 +177,13 @@ class Inverter:
         Args:
             config_data (dict): The 'solar' section from simulation_config.json.
         """
-        # [cite_start]Maximum power output (Clipping limit) [cite: 52, 96]
+        # Maximum power output (Clipping limit) 
         self.max_output_kw = config_data.get('inverter_max_kw', 4.0)
         
-        # [cite_start]Failure probability per step (e.g., 0.005 for 0.5%) [cite: 117]
+        # Failure probability per step (e.g., 0.005 for 0.5%) 
         self.failure_probability = config_data.get('inverter_failure_rate', 0.005)
         
-        # [cite_start]Duration limits for failure (in hours) [cite: 117]
+        # Duration limits for failure (in hours) 
         self.min_repair_time = config_data.get('failure_duration_min_hours', 4)
         self.max_repair_time = config_data.get('failure_duration_max_hours', 72)
 
@@ -208,10 +208,10 @@ class Inverter:
                 return False  # Still broken
 
         # 2. If working, roll the dice for a new failure
-        # [cite_start]"random failure event that occurs on average once every 200 days" [cite: 117]
+        # "random failure event that occurs on average once every 200 days" 
         if random.random() < self.failure_probability:
             self.is_broken = True
-            # [cite_start]Duration between 4 to 72 hours [cite: 117]
+            # Duration between 4 to 72 hours 
             self.hours_until_repair = random.randint(
                 self.min_repair_time, 
                 self.max_repair_time
@@ -230,10 +230,10 @@ class Inverter:
         Returns:
             float: AC power output (clipped if necessary, 0 if broken).
         """
-        # [cite_start]If broken, solar generation is zero regardless of conditions [cite: 118]
+        # If broken, solar generation is zero regardless of conditions 
         if not self.check_status():
             return 0.0
             
-        # [cite_start]Apply Clipping: "If solar generation exceeds this limit, the excess is lost" [cite: 97]
+        # Apply Clipping: "If solar generation exceeds this limit, the excess is lost"
         return min(dc_power_kw, self.max_output_kw)
     
