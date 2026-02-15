@@ -208,10 +208,10 @@ class Inverter:
                 return False  # Still broken
 
         # 2. If working, roll the dice for a new failure
-        # [cite_start]"random failure event that occurs on average once every 200 days" [cite: 117]
+        # "Random failure event that occurs on average once every 200 days"
         if random.random() < self.failure_probability:
             self.is_broken = True
-            # [cite_start]Duration between 4 to 72 hours [cite: 117]
+            # Duration between 4 to 72 hours
             self.hours_until_repair = random.randint(
                 self.min_repair_time, 
                 self.max_repair_time
