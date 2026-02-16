@@ -4,26 +4,26 @@
   // Tells VS Code how to build the container's image.
   "build": {
     "dockerfile": "Dockerfile",
-    // The "context" is the parent directory (your project root).
+    // The "context" is the parent directory (project root).
     "context": ".."
   },
   "mounts": [
     "source=projectname-bashhistory,target=/commandhistory,type=volume"
   ],
-  // This is the key part for your request. It mounts your local project folder
-  // into the container at the specified path.
+
+  // Mounts the local project folder into the container at the specified path.
   "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
-  // This sets the default folder that VS Code will open inside the container.
+
+  // Default folder that VS Code will open inside the container.
   "workspaceFolder": "/app",
-  // This command runs after the container has been created. It's the perfect place
-  // to install your Python dependencies from your local requirements.txt file.
-  // "postCreateCommand": "chmod +x .devcontainer/post-create.sh && .devcontainer/post-create.sh",
+
+  // Right before the container has been created, we set the permissions of the post-create script to be executable.
   "postCreateCommand": "/bin/bash .devcontainer/post-create.sh",
-  // Optional but highly recommended: Customize your VS Code setup inside the container.
+  
   "customizations": {
     "vscode": {
       "settings": {
-        // Points VS Code to the correct Python interpreter inside the container.
+        
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "editor.formatOnSave": true,
         "python.languageServer": "Pylance",
@@ -32,7 +32,7 @@
         "python.linting.pycodestyleEnabled": true,
         "terminal.integrated.defaultProfile.linux": "bash"
       },
-      // A list of extensions to install automatically inside the container.
+      // List of extensions to install automatically inside the container.
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance"
