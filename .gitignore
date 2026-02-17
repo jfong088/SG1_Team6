@@ -1,3 +1,5 @@
 # Ignore output data
 outputs/*
 2026-2/*
+.devcontainer/*
+.vscode/*
