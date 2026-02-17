@@ -2,7 +2,7 @@
   "simulation": {
     "duration_days": 30,
     "time_step_minutes": 60,
-    "season": "Summer",
+    "season": "Winter",
     "start_date": "2026-06-01"
   },
   "battery": {
@@ -26,8 +26,8 @@
   },
   "grid": {
     "export_limit_kw": 20.0,
-    "cost_import_cents": 0.75,
-    "price_export_cents": 0.90
+    "cost_import_cents": 75,
+    "price_export_cents": 90
   },
   "strategy": {
     "name": "LOAD_PRIORITY"
