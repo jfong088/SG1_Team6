@@ -17,7 +17,7 @@ Powered by `SimPy`, this project allows engineers and researchers to evaluate th
 The project is organized into modular components to separate configuration, physical modeling, and control logic.
 
 ```text
-GreenGridSim/
+Simulator/
 ├── config/
 │   └── simulation_config.json   # Simulation parameters (Battery size, solar capacity, strategy)
 ├── docs/                        # Project documentation, flowcharts, and reports
@@ -75,73 +75,73 @@ pip install -r requirements.txt
 ## ⚙️ Configuration
 The simulation is fully controlled via the config/simulation_config.json file. You can modify any of the following parameters to test different scenarios.
 
-1. Simulation Settings (simulation)
+1. **Simulation Settings** `(simulation)`
 General parameters defining the scope and environment of the run.
 
-`duration_days` (int): Total number of days to simulate (e.g., 30).
+    - `duration_days` (int): Total number of days to simulate (e.g., 30).
 
-`time_step_minutes` (int): The granularity of the simulation step in minutes (e.g., 60 for hourly steps).
+    - `time_step_minutes` (int): The granularity of the simulation step in minutes (e.g., 60 for hourly steps).
 
-`season` (string): Defines weather patterns and cloud coverage probabilities.
+    - `season` (string): Defines weather patterns and cloud coverage probabilities.
 
-Options: `"Summer"`, `"Winter"`, `"Spring"`, `"Fall"`.
+    - Options: `"Summer"`, `"Winter"`, `"Spring"`, `"Fall"`.
 
-`start_date` (string): The start date for the data logs in YYYY-MM-DD format (e.g., "2026-06-01").
+    - `start_date` (string): The start date for the data logs in YYYY-MM-DD format (e.g., "2026-06-01").
 
-2. Battery Storage (battery)
+2. **Battery Storage** `(battery)`
 Physical specifications of the home battery system.
 
-`capacity` (float): Total energy capacity in kWh (e.g., 13.5).
+    - `capacity` (float): Total energy capacity in kWh (e.g., 13.5).
 
-`initial_state` (float): Starting State of Charge (SoC) as a decimal percentage (e.g., 0.0 for empty, 1.0 for full).
+    - `initial_state` (float): Starting State of Charge (SoC) as a decimal percentage (e.g., 0.0 for empty, 1.0 for full).
 
-`efficiency` (float): Round-trip efficiency of the battery (e.g., 0.90 implies 10% energy loss).
+    - `efficiency` (float): Round-trip efficiency of the battery (e.g., 0.90 implies 10% energy loss).
 
-`discharge_depth` (float): Minimum allowable SoC limit to protect battery health (e.g., 0.05 means the battery stops discharging at 5%).
+    - `discharge_depth` (float): Minimum allowable SoC limit to protect battery health (e.g., 0.05 means the battery stops discharging at 5%).
 
-3. Solar Generation (solar)
+3. **Solar Generation** `(solar)`
 Parameters for the PV array and inverter hardware.
 
-`panel_peak_kw` (float): Maximum DC power output of the solar panels in kW (e.g., 5.0).
+    - `panel_peak_kw` (float): Maximum DC power output of the solar panels in kW (e.g., 5.0).
 
-`inverter_max_kw` (float): Maximum AC power output of the inverter (clipping limit) in kW (e.g., 4.0).
+    - `inverter_max_kw` (float): Maximum AC power output of the inverter (clipping limit) in kW (e.g., 4.0).
 
-`inverter_failure_rate` (float): Probability of inverter failure per simulation step (e.g., 0.005 for 0.5%).
+    - `inverter_failure_rate` (float): Probability of inverter failure per simulation step (e.g., 0.005 for 0.5%).
 
-`failure_duration_min_hours` (int): Minimum downtime in hours if a failure occurs (e.g., 4).
+    - `failure_duration_min_hours` (int): Minimum downtime in hours if a failure occurs (e.g., 4).
 
-`failure_duration_max_hours` (int): Maximum downtime in hours if a failure occurs (e.g., 72).
+    - `failure_duration_max_hours` (int): Maximum downtime in hours if a failure occurs (e.g., 72).
 
-4. Household Load (load)
+4. **Household Load** `(load)`
 Consumption profile of the house.
 
-`base_load_kw` (float): Constant background power demand (fridge, router, standby) in kW (e.g., 0.5).
+    - `base_load_kw` (float): Constant background power demand (fridge, router, standby) in kW (e.g., 0.5).
 
-`peak_load_kw` (float): Maximum random consumption spike added during peak hours in kW (e.g., 3.0).
+    - `peak_load_kw` (float): Maximum random consumption spike added during peak hours in kW (e.g., 3.0).
 
-`peak_start_hour` (int): Start hour (0-23) of the peak demand window (e.g., 18 for 6 PM).
+    - `peak_start_hour` (int): Start hour (0-23) of the peak demand window (e.g., 18 for 6 PM).
 
-`peak_end_hour` (int): End hour (0-23) of the peak demand window (e.g., 21 for 9 PM).
+    - `peak_end_hour` (int): End hour (0-23) of the peak demand window (e.g., 21 for 9 PM).
 
-5. Utility Grid (grid)
+5. **Utility Grid** `(grid)`
 Economic and physical connection to the grid.
 
-`export_limit_kw` (float): Maximum power allowed to be sent back to the grid in kW (e.g., 20.0).
+    - `export_limit_kw` (float): Maximum power allowed to be sent back to the grid in kW (e.g., 20.0).
 
-`cost_import_cents` (float): Cost to buy electricity from the grid in cents/kWh (e.g., 0.75).
+    - `cost_import_cents` (float): Cost to buy electricity from the grid in cents/kWh (e.g., 0.75).
 
-`price_export_cents` (float): Earnings for selling electricity to the grid in cents/kWh (e.g., 0.90).
+    - `price_export_cents` (float): Earnings for selling electricity to the grid in cents/kWh (e.g., 0.90).
 
-6. Strategy (strategy)
+6. **Strategy** `(strategy)`
 The "Brain" of the system.
 
-`name` (string): The Energy Management Strategy (EMS) to use.
+    - `name` (string): The Energy Management Strategy (EMS) to use.
 
-- `"LOAD_PRIORITY"`: Powers house first, then charges battery, then exports.
+        - `"LOAD_PRIORITY"`: Powers house first, then charges battery, then exports.
 
-- `"CHARGE_PRIORITY"`: Charges battery first, then powers house, then exports.
+        - `"CHARGE_PRIORITY"`: Charges battery first, then powers house, then exports.
 
-- `"PRODUCE_PRIORITY"`: Exports to grid first, then charges battery, then powers house.
+        - `"PRODUCE_PRIORITY"`: Exports to grid first, then charges battery, then powers house.
 
 ---
 
@@ -151,15 +151,16 @@ To run the simulation, execute the main.py script from the project root:
 ```Bash
 
 python main.py
-What happens next?
+```
+
+**What happens next?**
 The system loads the configuration from config/simulation_config.json.
 
 The engine runs the simulation step-by-step using simpy.
 
 A summary is printed to the console.
 
-Detailed logs are saved to the outputs/ directory.
-```
+Detailed logs are saved to the outputs/ director.
 
 ---
 
