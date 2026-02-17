@@ -62,17 +62,17 @@ class SimulationEngine:
         Runs every 'step_minutes' (e.g., every hour).
         """
         while True:
-            # --- 1. Determine Current Time ---
+            # 1. Determine Current Time 
             current_time_min = self.env.now
             current_hour = (current_time_min / 60) % 24
             day_number = int(current_time_min / (60 * 24))
             
-            # --- 2. Get Environmental Data ---
+            #  2. Get Environmental Data 
             # Cloud coverage is determined daily or hourly? Let's assume daily for simplicity,
             # or we could make it hourly. For now, let's regenerate it every step for variability.
             cloud_cover = self.weather.get_cloud_coverage()
             
-            # --- 3. Calculate Physics ---
+            #  3. Calculate Physics 
             # a) Solar Generation (DC)
             dc_solar_kw = self.solar_panel.get_generation(current_hour, cloud_cover)
             
@@ -82,7 +82,7 @@ class SimulationEngine:
             # c) House Consumption
             load_kw = self.home_load.get_current_load(current_hour)
             
-            # --- 4. Strategy Decision (The Brain) ---
+            #  4. Strategy Decision (The Brain) 
             # The manager decides where energy goes.
             # We pass the battery object so it can charge/discharge it internally.
             flow_decision = self.energy_manager.decide_energy_flow(
@@ -92,12 +92,12 @@ class SimulationEngine:
                 grid_limit_kw = self.grid.export_limit_kw
             )
             
-            # --- 5. Calculate Costs ---
+            #  5. Calculate Costs 
             grid_import = flow_decision['grid_import']
             grid_export = flow_decision['solar_to_grid']
             step_cost = self.grid.calculate_cost(grid_import, grid_export)
             
-            # --- 6. Log Data ---
+            #  6. Log Data 
             self.results.append({
                 'time_min': current_time_min,
                 'day': day_number,
@@ -111,5 +111,5 @@ class SimulationEngine:
                 'cloud_cover': cloud_cover
             })
             
-            # --- 7. Wait for next step ---
+            #  7. Wait for next step 
             yield self.env.timeout(self.step_minutes)

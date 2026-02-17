@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This line ensures that the script will exit immediately if any command fails.
+# Ensures that the script will exit immediately if any command fails.
 set -e
 
 # Fix Volume Permissions

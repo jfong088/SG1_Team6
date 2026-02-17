@@ -51,7 +51,7 @@ class EnergyManager:
 
         return flow_log
 
-    # --- STRATEGY 1: LOAD PRIORITY (Default) ---
+    #  STRATEGY 1: LOAD PRIORITY (Default) 
     # "Power the house load first, charge the battery second, export excess last" [cite: 101]
     def _run_load_priority(self, solar, load, battery, grid_limit, log):
         
@@ -91,8 +91,8 @@ class EnergyManager:
         if excess_solar > 0:
             log['curtailed'] = excess_solar
 
-    # --- STRATEGY 2: CHARGE PRIORITY ---
-    # "Charge the battery first, power the house load second, export excess last" [cite: 102]
+    #  STRATEGY 2: CHARGE PRIORITY 
+    # Charge the battery first, power the house load second, export excess last
     def _run_charge_priority(self, solar, load, battery, grid_limit, log):
         
         remaining_solar = solar
@@ -128,8 +128,8 @@ class EnergyManager:
             
         log['curtailed'] = remaining_solar
 
-    # --- STRATEGY 3: PRODUCE PRIORITY ---
-    # "Export all energy up to threshold first, charge battery second, house last" [cite: 103]
+    #  STRATEGY 3: PRODUCE PRIORITY 
+    # Export all energy up to threshold first, charge battery second, house last
     def _run_produce_priority(self, solar, load, battery, grid_limit, log):
         
         remaining_solar = solar
@@ -154,7 +154,7 @@ class EnergyManager:
             deficit = load - remaining_solar
             remaining_solar = 0.0
             
-            # House needs energy. Try battery first? 
+            # House needs energy. (Try battery first) 
             # Logic implies preserving export, but if we have battery we use it.
             discharged = battery.discharge(deficit)
             log['battery_discharge'] = discharged

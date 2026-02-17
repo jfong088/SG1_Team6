@@ -17,7 +17,7 @@ class Battery:
             config_data (dict): Dictionary containing battery specifications 
                                 from simulation_config.json.
         """
-        # --- Physical Attributes (Constants) ---
+        # Physical Attributes (Constants)
         # Default: 13.5 kWh (Tesla Powerwall standard)
         self.capacity_kwh = config_data.get('capacity', 13.5)
         
@@ -27,7 +27,7 @@ class Battery:
         # Minimum allowed discharge depth (e.g., 0.05 or 5%)
         self.min_soc_limit_pct = config_data.get('discharge_depth', 0.05)
 
-        # --- Dynamic State (Variables) ---
+        # Dynamic State (Variables)
         # Initial State of Charge (SoC) as a percentage (0.0 to 1.0)
         initial_state_pct = config_data.get('initial_state', 0.0)
         
@@ -52,7 +52,7 @@ class Battery:
                    (May be less than input if battery is full).
         """
         # 1. Calculate potential energy to store after efficiency loss
-        #  - Modeling loss in energy during charge
+        # Modeling loss in energy during charge
         energy_to_store = energy_input_kwh * self.efficiency_ow
 
         # 2. Calculate available space in the battery
@@ -61,7 +61,7 @@ class Battery:
         # 3. Check for overflow (Clipping)
         if energy_to_store > space_available:
             energy_to_store = space_available
-            # Reverse calculation: How much input was actually needed to fill this space?
+            # Reverse calculation (How much input was actually needed to fill this space)
             real_input = space_available / self.efficiency_ow
         else:
             real_input = energy_input_kwh
@@ -135,7 +135,7 @@ class SolarPanel:
         
         Args:
             time_of_day_hour (float): Current hour (0.0 to 23.99).
-            [cite_start]cloud_coverage_pct (float): 0.0 (Clear) to 1.0 (Overcast)[cite: 106].
+            cloud_coverage_pct (float): 0.0 (Clear) to 1.0 (Overcast)
             
         Returns:
             float: Generated power in kW.
@@ -157,7 +157,7 @@ class SolarPanel:
         base_generation = self.peak_power_kw * math.sin(sun_angle)
 
         # 4. Apply Cloud Factor
-        # "cloud coverage of 0.3 would reduce generation by 30%" 
+        # cloud coverage of 0.3 would reduce generation by 30%
         actual_generation = base_generation * (1 - cloud_coverage_pct)
 
         return max(0.0, actual_generation)
@@ -208,7 +208,7 @@ class Inverter:
                 return False  # Still broken
 
         # 2. If working, roll the dice for a new failure
-        # "random failure event that occurs on average once every 200 days" 
+        # Random failure event that occurs on average once every 200 days 
         if random.random() < self.failure_probability:
             self.is_broken = True
             # Duration between 4 to 72 hours 

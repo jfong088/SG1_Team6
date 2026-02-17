@@ -19,7 +19,6 @@ class Weather:
 
         # Probability weights for cloud coverage levels:
         # (Clear, Partly Cloudy, Mostly Cloudy, Overcast)
-        # Reference: PDF Page 4 [cite: 109-113]
         self.season_weights = {
             'Spring': [0.1, 0.3, 0.4, 0.2],
             'Summer': [0.05, 0.15, 0.3, 0.5],
@@ -42,7 +41,6 @@ class Weather:
         category = random.choices([0, 1, 2, 3], weights=weights, k=1)[0]
         
         # 3. Generate specific coverage percentage based on category ranges
-        # Reference: PDF Page 4 [cite: 115]
         if category == 0:   # Clear (0.0 - 0.2)
             return random.uniform(0.0, 0.2)
         elif category == 1: # Partly Cloudy (0.2 - 0.6)
@@ -83,11 +81,11 @@ class HomeLoad:
         Returns:
             float: Power demand in kW.
         """
-        # 1. Start with the base load (Fridge, Router, etc.) [cite: 91]
+        # 1. Start with the base load (Fridge, Router, etc.)
         current_load = self.base_load_kw
 
         # 2. Add random noise/spikes
-        # "random spikes up to 3 kW during peak hours (6-9 PM)" [cite: 93]
+        # Random spikes up to 3 kW during peak hours (6-9 PM)"
         if self.peak_start <= hour_of_day <= self.peak_end:
             # Higher probability of high spikes during peak time
             spike = random.uniform(0, self.peak_load_kw)
