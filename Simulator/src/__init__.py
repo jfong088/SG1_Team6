@@ -1,3 +1,5 @@
+# src/__init__.py
+
 # 1. Expose Physical Components
 from .components import Battery, SolarPanel, Inverter
 
@@ -10,5 +12,8 @@ from .strategy import EnergyManager
 # 4. Expose Neighborhood Objects
 from .neighborhood import House, Neighborhood
 
-# 5. Expose the Main Simulation Engine
+# 5. Expose Data Preparation Logic
+from .preparation import run_pipeline
+
+# 6. Expose the Main Simulation Engine
 from .engine import SimulationEngine

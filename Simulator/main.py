@@ -1,13 +1,14 @@
 import yaml
 import os
 import pandas as pd
-from src.engine import SimulationEngine
+from pathlib import Path
 from datetime import datetime
 
+from src.engine import SimulationEngine
+from src import SimulationEngine, run_pipeline
+
 def load_config(config_path):
-    """
-    Loads the simulation configuration from a YAML file.
-    """
+    """Loads the simulation configuration from a YAML file."""
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Configuration file not found at: {config_path}")
         
@@ -15,9 +16,7 @@ def load_config(config_path):
         return yaml.safe_load(f)
 
 def generate_neighborhood(config):
-    """
-    Generates individual house configurations based on profiles and wealth multipliers.
-    """
+    """Generates individual house configurations based on profiles and wealth multipliers."""
     houses = {}
     house_counter = 1
 
@@ -36,7 +35,7 @@ def generate_neighborhood(config):
         for _ in range(count):
             house_id = f"house_{house_counter}"
 
-            # Apply Wealth Effect multiplying the base and peak loads
+            # Apply Wealth Effect
             houses[house_id] = {
                 "type": profile_name,
                 "wealth": wealth_level,
@@ -53,11 +52,8 @@ def generate_neighborhood(config):
 
     return houses
 
-def save_results(df_results, output_dir='outputs'):
-    """
-    Saves the simulation results to a CSV file with a timestamp.
-    """
-    # Ensure output directory exists
+def save_results(df_results, output_dir):
+    """Saves the simulation results to a CSV file with a timestamp."""
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         
@@ -72,9 +68,7 @@ def save_results(df_results, output_dir='outputs'):
     print(f"\n✅ Results saved to: {filename}")
 
 def print_summary(df):
-    """
-    Prints a quick summary of the simulation to the console.
-    """
+    """Prints a quick summary of the simulation to the console."""
     print("\n" + "="*40)
     print("       SIMULATION SUMMARY")
     print("="*40)
@@ -84,7 +78,7 @@ def print_summary(df):
     total_load = df['load_kw'].sum()
     total_import = df['grid_import_kw'].sum()
     total_export = df['grid_export_kw'].sum()
-    net_cost = df['cost_cents'].sum() / 100  # Convert cents to dollars/pesos
+    net_cost = df['cost_cents'].sum() / 100 
 
     print(f"Duration:      {total_days} Days")
     print(f"Total Load:    {total_load:.2f} kWh")
@@ -96,8 +90,11 @@ def print_summary(df):
     print("="*40)
 
 if __name__ == "__main__":
-    # 1. Define paths
-    CONFIG_PATH = 'config/simulation_config.yaml'
+    # 1. FIX DE RUTAS RELATIVAS (Requisito del profesor Castillo)
+    # BASE_DIR siempre apuntará a la carpeta donde vive este archivo main.py
+    BASE_DIR = Path(__file__).resolve().parent
+    CONFIG_PATH = BASE_DIR / 'config' / 'simulation_config.yaml'
+    OUTPUT_DIR = BASE_DIR / 'outputs'
 
     try:
         print("🚀 Starting GreenGridSim...")
@@ -116,8 +113,12 @@ if __name__ == "__main__":
         results_df = engine.run()
 
         # 5. Save and Show Results
-        save_results(results_df)
+        save_results(results_df, OUTPUT_DIR)
         print_summary(results_df)
+
+        # 6. Run pipeline
+        print("\n⚙️ Preparando datos para el Dashboard...")
+        run_pipeline()
 
     except Exception as e:
         print(f"\n❌ Error running simulation: {e}")
