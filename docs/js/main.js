@@ -8,13 +8,17 @@ d3.json("data/buildings.json").then((data) => {
 doubleBarChart("#chart1", data);
 donutChart("#chart2", data);
 
+stackedChart("#chart3", data);
+
+lineChart("#chart4", data);
+
 }).catch((error) => {
     console.log(error);
 });
 
 /* 
 TOTAL PRODUCTION VS CONSUMPTION
---> Gráfica de Barras dobles
+Gráfica de Barras dobles
 */
 
 function doubleBarChart(container, data) {
@@ -125,7 +129,7 @@ function doubleBarChart(container, data) {
 }
 
 /* 
---> Gráfica de Dona
+Gráfica de Dona
 */
 
 function donutChart(container, data) {
@@ -180,7 +184,7 @@ function donutChart(container, data) {
 		.attr("d", arc)
 		.each(function(d) { this._current = d; });
 
-	// animación
+	// transition
 	arcs.transition()
 		.duration(800)
 		.attrTween("d", function(d) {
@@ -188,7 +192,6 @@ function donutChart(container, data) {
 		return t => arc(i(t));
 		});
 
-	// hover (suave)
 	arcs.on("mouseover", function() {
 		d3.select(this).attr("opacity", 0.7);
 	})
@@ -223,29 +226,289 @@ function donutChart(container, data) {
 		.text(d => `${d.name}: ${d.count}`);
 
 	// ===== INTERACCIÓN LEYENDA =====
-// D3 v4/v5 → los parámetros son (d, i), sin event
-legendItem
-    .on("mouseover", function(d) {  // ← d es el dato directamente
-        const hoveredName = d.name;
 
-        arcs.attr("opacity", function() {
-            const sliceName = d3.select(this).attr("data-name");
-            return sliceName === hoveredName ? 1 : 0.2;
+	legendItem
+		.on("mouseover", function(d) {  
+			const hoveredName = d.name;
+
+			arcs.attr("opacity", function() {
+				const sliceName = d3.select(this).attr("data-name");
+				return sliceName === hoveredName ? 1 : 0.2;
+			});
+
+			legendItem.select("text")
+				.style("font-weight", "400")
+				.style("fill", "#555");
+
+			d3.select(this).select("text")
+				.style("font-weight", "700")
+				.style("fill", "#000");
+		})
+		.on("mouseout", function() {
+			arcs.attr("opacity", 1);
+
+			legendItem.select("text")
+				.style("font-weight", "400")
+				.style("fill", "#555");
+		});
+}
+
+/* 
+Gráfica de Relleno
+*/
+
+function stackedChart(container, data) {
+
+    const containerWidth = document.querySelector(container).clientWidth;
+
+    const margin = { top: 20, right: 200, bottom: 40, left: 80 };
+    const width = containerWidth;
+    const height = 400;
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    d3.select(container).html("");
+
+    const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const g = svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // ===== PREPARAR DATA =====
+    // Agrupar por país
+    const countries = Array.from(new Set(data.map(d => d.country)));
+
+    // Una sola barra con todos los países apilados
+    const row = { group: "Buildings" };
+    countries.forEach(c => row[c] = 0);
+    data.forEach(d => row[d.country] += +d.height);
+
+    const stackData = [row];
+
+    // ===== STACK =====
+    const stack = d3.stack().keys(countries);
+    const stackedData = stack(stackData);
+
+    // ===== SCALES =====
+    const x = d3.scaleBand()
+        .domain(["Buildings"])
+        .range([0, innerWidth])
+        .padding(0.4);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(stackedData[stackedData.length - 1], d => d[1])])
+        .range([innerHeight, 0]);
+
+    const color = d3.scaleOrdinal()
+        .domain(countries)
+        .range(["#3B82F6", "#60A5FA", "#2563EB", "#1D4ED8", "#93C5FD", "#1E40AF"]);
+
+    // ===== BARRAS =====
+    const layers = g.selectAll(".layer")
+        .data(stackedData)
+        .enter()
+        .append("g")
+        .attr("class", "layer")
+        .attr("fill", d => color(d.key));
+
+    layers.append("rect")
+        .attr("x", d => x(d[0].data.group))
+        .attr("y", d => y(d[0][1]))
+        .attr("height", d => y(d[0][0]) - y(d[0][1]))
+        .attr("width", x.bandwidth());
+
+    // ===== EJES =====
+    g.append("g")
+        .attr("transform", `translate(0, ${innerHeight})`)
+        .call(d3.axisBottom(x));
+
+    g.append("g")
+        .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}m`));
+
+    // ===== LEGEND =====
+    const legend = svg.append("g")
+        .attr("transform", `translate(${innerWidth + margin.left + 20}, ${margin.top})`);
+
+    const legendItem = legend.selectAll(".legend-item")
+        .data(countries.slice().reverse())
+        .enter()
+        .append("g")
+        .attr("class", "legend-item")
+        .attr("transform", (d, i) => `translate(0, ${i * 22})`);
+
+    legendItem.append("rect")
+        .attr("width", 12)
+        .attr("height", 12)
+        .attr("rx", 3)
+        .attr("fill", d => color(d));
+
+    legendItem.append("text")
+        .attr("x", 18)
+        .attr("y", 10)
+        .style("font-size", "12px")
+        .style("fill", "#555")
+        .text(d => d);
+
+    // ===== INTERACCIÓN =====
+    legendItem
+        .on("mouseover", function(d) {
+            layers.attr("opacity", layer => layer.key === d ? 1 : 0.25);
+
+            legendItem.select("text")
+                .style("font-weight", "400")
+                .style("fill", "#555");
+
+            d3.select(this).select("text")
+                .style("font-weight", "700")
+                .style("fill", "#000");
+        })
+        .on("mouseout", function() {
+            layers.attr("opacity", 1);
+
+            legendItem.select("text")
+                .style("font-weight", "400")
+                .style("fill", "#555");
+        });
+}
+
+/*
+Line Chart
+*/
+
+function lineChart(container, data) {
+
+    const containerWidth = document.querySelector(container).clientWidth;
+
+    const width = containerWidth;
+    const height = 400;
+
+    const margin = {
+        left: 80,
+        right: 20,
+        top: 20,
+        bottom: 100
+    };
+
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    // Formato de datos
+    data.forEach(d => {
+        d.height = +d.height;
+    });
+
+    // Limpiar contenedor
+    d3.select(container).html("");
+
+    const svg = d3.select(container)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const g = svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // ===== SCALES =====
+    const x = d3.scaleBand()
+        .domain(data.map(d => d.name))
+        .range([0, innerWidth])
+        .padding(0.5);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.height) * 1.1])
+        .range([innerHeight, 0]);
+
+    // ===== LÍNEA =====
+    const line = d3.line()
+        .x(d => x(d.name) + x.bandwidth() / 2)
+        .y(d => y(d.height));
+
+    g.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "#5B8FF9")
+        .attr("stroke-width", 2.5)
+        .attr("d", line);
+
+    // ===== TOOLTIP =====
+    const tooltip = d3.select(container)
+        .append("div")
+        .style("position", "absolute")
+        .style("background", "#fff")
+        .style("border", "1px solid #ddd")
+        .style("border-radius", "8px")
+        .style("padding", "10px 14px")
+        .style("font-size", "12px")
+        .style("color", "#333")
+        .style("box-shadow", "0 2px 8px rgba(0,0,0,0.12)")
+        .style("pointer-events", "none")
+        .style("opacity", 0);
+
+    // ===== PUNTOS =====
+    g.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.name) + x.bandwidth() / 2)
+        .attr("cy", d => y(d.height))
+        .attr("r", 5)
+        .attr("fill", "#5B8FF9")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 2)
+        .on("mouseover", function(d) {
+            d3.select(this)
+                .transition().duration(150)
+                .attr("r", 8)
+                .attr("fill", "#2563EB");
+
+            tooltip
+                .style("opacity", 1)
+                .html(`
+                    <strong>${d.name}</strong><br/>
+                     ${d.country}<br/>
+                     ${d.height} m
+                `);
+        })
+        .on("mousemove", function() {
+            const [mx, my] = d3.mouse(d3.select(container).node());
+            tooltip
+                .style("left", `${mx + 15}px`)
+                .style("top", `${my - 40}px`);
+        })
+        .on("mouseout", function() {
+            d3.select(this)
+                .transition().duration(150)
+                .attr("r", 5)
+                .attr("fill", "#5B8FF9");
+
+            tooltip.style("opacity", 0);
         });
 
-        legendItem.select("text")
-            .style("font-weight", "400")
-            .style("fill", "#555");
+    // ===== EJES =====
+    g.append("g")
+        .attr("transform", `translate(0, ${innerHeight})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("transform", "rotate(-40)")
+        .style("text-anchor", "end");
 
-        d3.select(this).select("text")
-            .style("font-weight", "700")
-            .style("fill", "#000");
-    })
-    .on("mouseout", function() {
-        arcs.attr("opacity", 1);
+    g.append("g")
+        .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}m`));
 
-        legendItem.select("text")
-            .style("font-weight", "400")
-            .style("fill", "#555");
-    });
+    // ===== LABELS =====
+    g.append("text")
+        .attr("x", innerWidth / 2)
+        .attr("y", innerHeight + 90)
+        .attr("text-anchor", "middle")
+        .text("Buildings");
+
+    g.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -innerHeight / 2)
+        .attr("y", -60)
+        .attr("text-anchor", "middle")
+        .text("Height (m)");
 }
