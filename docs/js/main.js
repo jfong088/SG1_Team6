@@ -6,7 +6,7 @@
 d3.json("data/buildings.json").then((data) => {
     
 doubleBarChart("#chart1", data);
-doubleBarChart("#chart2", data);
+donutChart("#chart2", data);
 
 }).catch((error) => {
     console.log(error);
@@ -16,6 +16,7 @@ doubleBarChart("#chart2", data);
 TOTAL PRODUCTION VS CONSUMPTION
 --> Gráfica de Barras dobles
 */
+
 function doubleBarChart(container, data) {
 
     const containerWidth = document.querySelector(container).clientWidth;
@@ -123,3 +124,128 @@ function doubleBarChart(container, data) {
 	
 }
 
+/* 
+--> Gráfica de Dona
+*/
+
+function donutChart(container, data) {
+
+	const legendWidth = 200;
+
+	const containerWidth = document.querySelector(container).clientWidth;
+
+	const width = containerWidth;
+	const height = 300;
+	const radius = Math.min(width - legendWidth, height) / 2;
+
+	// limpiar contenedor
+	d3.select(container).html("");
+
+	const svg = d3.select(container)
+		.append("svg")
+		.attr("class", "chart-svg")
+		.attr("width", width)
+		.attr("height", height);
+
+	const g = svg.append("g")
+		.attr("transform", `translate(${(width - legendWidth) / 2}, ${height / 2})`);
+
+	// 🎨 colores suaves
+	const color = d3.scaleOrdinal()
+		.range(["#3B82F6", "#60A5FA", "#2563EB", "#1D4ED8", "#93C5FD", "#1E40AF"]);
+
+	// arc
+	const arc = d3.arc()
+		.outerRadius(radius - 10)
+		.innerRadius(radius - 60);
+
+	// pie
+	const pie = d3.pie()
+		.padAngle(0.01)
+		.value(d => d.count)
+		.sort(null);
+
+	// formatear datos
+	data.forEach(d => {
+		d.count = +d.count;
+	});
+
+	// ===== DONUT =====
+	const arcs = g.selectAll("path")
+		.data(pie(data))
+		.enter()
+		.append("path")
+		.attr("fill", d => color(d.data.name))
+		.attr("data-name", d => d.data.name) //Segun claude
+		.attr("d", arc)
+		.each(function(d) { this._current = d; });
+
+	// animación
+	arcs.transition()
+		.duration(800)
+		.attrTween("d", function(d) {
+		const i = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+		return t => arc(i(t));
+		});
+
+	// hover (suave)
+	arcs.on("mouseover", function() {
+		d3.select(this).attr("opacity", 0.7);
+	})
+	.on("mouseout", function() {
+		d3.select(this).attr("opacity", 1);
+	});
+
+	// ===== LEGEND =====
+	const legend = svg.append("g")
+		.attr("transform", `translate(${width - legendWidth + 10}, 30)`);
+
+	const legendItem = legend.selectAll(".legend-item")
+		.data(data)
+		.enter()
+		.append("g")
+		.attr("class", "legend-item")
+		.attr("transform", (d, i) => `translate(0, ${i * 22})`);
+
+	// cuadritos de color
+	legendItem.append("rect")
+		.attr("width", 12)
+		.attr("height", 12)
+		.attr("rx", 3)
+		.attr("fill", d => color(d.name));
+
+	// texto
+	legendItem.append("text")
+		.attr("x", 18)
+		.attr("y", 10)
+		.style("font-size", "12px")
+		.style("fill", "#555")
+		.text(d => `${d.name}: ${d.count}`);
+
+	// ===== INTERACCIÓN LEYENDA =====
+// D3 v4/v5 → los parámetros son (d, i), sin event
+legendItem
+    .on("mouseover", function(d) {  // ← d es el dato directamente
+        const hoveredName = d.name;
+
+        arcs.attr("opacity", function() {
+            const sliceName = d3.select(this).attr("data-name");
+            return sliceName === hoveredName ? 1 : 0.2;
+        });
+
+        legendItem.select("text")
+            .style("font-weight", "400")
+            .style("fill", "#555");
+
+        d3.select(this).select("text")
+            .style("font-weight", "700")
+            .style("fill", "#000");
+    })
+    .on("mouseout", function() {
+        arcs.attr("opacity", 1);
+
+        legendItem.select("text")
+            .style("font-weight", "400")
+            .style("fill", "#555");
+    });
+}
