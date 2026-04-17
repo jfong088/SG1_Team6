@@ -25,6 +25,21 @@
             </div>
         </header>
 
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="p-4 bg-white rounded shadow-sm border-start border-success border-5">
+                    <h2 class="h4 text-success fw-bold mb-3">The Green Valley Project: A Sun-Powered Neighborhood</h2>
+                    <p class="fs-6 text-dark mb-2">Energy costs are rising, and the traditional power grid is under more
+                        stress than ever. In the Green Valley community, we decided to stop being just consumers and
+                        start being producers. This simulation captures 30 days of a winter season where different
+                        households—from small studios to luxury estates—integrated Solar PV and Battery Storage to
+                        create a self-sustaining ecosystem.</p>
+                    <p class="fs-6 fw-semibold text-secondary mb-0">Scroll down to see how we tamed the "Duck Curve" and
+                        saved over $10,000 in a single month.</p>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4 mb-5">
 
             <div class="col-md-4">
@@ -61,11 +76,26 @@
 
         <div class="row g-4 justify-content-center">
 
+            <div class="col-12 mt-4 mb-2">
+                <div class="px-2">
+                    <h3 class="h5 text-success fw-bold">One Neighborhood, Different Needs</h3>
+                    <p class="text-muted mb-0">Not every home uses energy the same way. While our Studios represent
+                        efficient, low-impact living, our Luxury households drive higher demand but also provide a
+                        larger surface area for solar collection. By balancing these different profiles, the
+                        neighborhood ensures that surplus energy from one can eventually support the stability of the
+                        whole.</p>
+                </div>
+            </div>
+
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body p-4">
                         <h5 class="card-title text-secondary mb-4 fw-bold">Production vs. Consumption by House Type</h5>
                         <div id="chart1" class="w-100 overflow-auto text-center"></div>
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0"><strong>Chart 1:</strong> Compares how much energy each
+                                family type needs versus how much they can generate from their specific solar array.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -76,6 +106,11 @@
                         <h5 class="card-title text-secondary mb-4 fw-bold">Production vs. Consumption by Wealth Level
                         </h5>
                         <div id="chart2" class="w-100 overflow-auto text-center"></div>
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0"><strong>Chart 2:</strong> Visualizes the socio-economic
+                                impact on energy flow; higher wealth levels often correlate with larger energy
+                                footprints and production capacity.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,8 +118,20 @@
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h5 class="card-title text-secondary mb-4 fw-bold">Energy Destination & Grid Export</h5>
+                        <h5 class="card-title text-secondary mb-2 fw-bold">Energy Destination & Grid Export</h5>
+                        <h6 class="text-success fw-bold mt-3">Where does the sun go?</h6>
+                        <p class="text-muted small mb-4">Generation is only half the battle; efficiency is the other.
+                            Our system prioritizes "Self-Consumption"—using your own solar energy to power your lights
+                            and charge your batteries before even thinking about the grid. This maximizes your ROI and
+                            keeps the local energy "behind the meter."</p>
+
                         <div id="chart3" class="w-100 overflow-auto text-center"></div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0"><strong>Chart 3:</strong> Breakdown of solar utilization.
+                                "Self-consumed" energy stays in the neighborhood, while "Exported" energy represents the
+                                surplus sold back to the utility grid.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,8 +139,21 @@
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h5 class="card-title text-secondary mb-4 fw-bold">The Duck Curve & Grid Stress</h5>
+                        <h5 class="card-title text-secondary mb-2 fw-bold">The Duck Curve & Grid Stress</h5>
+                        <h6 class="text-success fw-bold mt-3">The Challenge: The Afternoon Ramp</h6>
+                        <p class="text-muted small mb-4">As the sun sets, solar production drops just as families arrive
+                            home and turn on their appliances. This creates the famous "Duck Curve"—a massive spike in
+                            grid demand. Our smart Energy Management System (EMS) uses battery storage to "flatten" this
+                            curve, preventing grid blackouts and reducing high-cost energy imports during peak hours.
+                        </p>
+
                         <div id="chart4" class="w-100 overflow-auto text-center"></div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0"><strong>Chart 4:</strong> The "Belly" of the duck shows
+                                surplus solar at noon. The "Neck" shows the evening peak. Our goal is to keep the blue
+                                Net Load line as flat as possible.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,8 +161,20 @@
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h5 class="card-title text-secondary mb-4 fw-bold">Battery Storage Utilization</h5>
+                        <h5 class="card-title text-secondary mb-2 fw-bold">Battery Storage Utilization</h5>
+                        <h6 class="text-success fw-bold mt-3">Storing Sunlight for the Night</h6>
+                        <p class="text-muted small mb-4">Our batteries are the heart of the community. They charge
+                            silently during the quiet morning hours when the sun is at its peak and discharge
+                            strategically when the grid is most expensive. This is the "buffer" that makes energy
+                            independence possible.</p>
+
                         <div id="chart5" class="w-100 overflow-auto text-center"></div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0"><strong>Chart 5:</strong> Shows the average State of Charge
+                                (SoC) across the neighborhood. Notice how the batteries reach 100% capacity just before
+                                the sun starts to set.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -110,8 +182,19 @@
             <div class="col-md-6">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h5 class="card-title text-secondary mb-4 fw-bold">Energy Independence by Wealth Level</h5>
+                        <h5 class="card-title text-secondary mb-2 fw-bold">Energy Independence by Wealth Level</h5>
+                        <h6 class="text-success fw-bold mt-3">The Path to Independence</h6>
+                        <p class="text-muted small mb-4">True success is measured by how little we depend on the
+                            traditional utility company. By looking at our energy mix, we can see that a significant
+                            portion of our daily life is now powered entirely by the sky, regardless of the wealth level
+                            of the household.</p>
+
                         <div id="chart7" class="w-100 overflow-auto text-center"></div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <p class="text-muted small mb-0"><strong>Chart 7:</strong> Proportional comparison between
+                                solar energy used and the remaining energy we still need to import from the grid.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,9 +202,22 @@
             <div class="col-md-6 mx-auto">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body p-4 text-center">
-                        <h5 class="card-title text-secondary mb-4 fw-bold">Cost Savings vs. Energy Export per Household
+                        <h5 class="card-title text-secondary mb-2 fw-bold text-start">Cost Savings vs. Energy Export per
+                            Household
                         </h5>
+                        <h6 class="text-success fw-bold text-start mt-3">Every Home is a Winner</h6>
+                        <p class="text-muted small text-start mb-4">Finally, let's look at the individual performance of
+                            our 45+ households. Each bubble represents a home. The higher the bubble, the more money
+                            that family saved. The further to the right, the more they contributed to the grid's
+                            stability by exporting clean energy. This is decentralized power in action.</p>
+
                         <div id="chart6" class="w-100 overflow-auto text-center"></div>
+
+                        <div class="mt-4 pt-3 border-top text-start">
+                            <p class="text-muted small mb-0"><strong>Chart 6:</strong> The "Leaf Project" view: Bubble
+                                size represents total house consumption. This identifies which specific homes are
+                                achieving the highest financial efficiency.</p>
+                        </div>
                     </div>
                 </div>
             </div>
