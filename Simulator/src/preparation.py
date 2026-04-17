@@ -81,14 +81,13 @@ def process_simulation_data(csv_path):
 
 def export_to_dashboard(dashboard_data):
     """Saves the JSON directly to the GitHub Pages web folder."""
-    # Go up one level from src/ and enter docs/
-    base_dir = Path(__file__).resolve().parent.parent
-    docs_dir = base_dir / 'export'
-    
+    # Go up two levels from src/ and enter docs/
+    base_dir = Path(__file__).resolve().parent.parent.parent  
+    data_dir = base_dir / 'docs' / 'data'
     # Create the folder if it doesn't exist
-    docs_dir.mkdir(exist_ok=True)
+    data_dir.mkdir(exist_ok=True)
     
-    json_path = docs_dir / 'dashboard_data.json'
+    json_path = data_dir / 'dashboard_data.json'
     
     with open(json_path, 'w') as f:
         json.dump(dashboard_data, f, indent=4)

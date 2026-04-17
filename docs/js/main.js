@@ -1,7 +1,3 @@
-/* =======================================================================
- * GREEN GRID SIMULATION - INTERACTIVE DASHBOARD (D3.js v5)
- * ======================================================================= */
-
 // 1. Create a Global and invisible Tooltip that we will share among all charts
 const tooltip = d3.select("body").append("div")
     .attr("class", "d3-tooltip")
